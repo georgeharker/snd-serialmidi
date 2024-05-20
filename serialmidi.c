@@ -68,6 +68,8 @@ static bool handshake[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = 1};     /* boo
 
 module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for Serial MIDI.");
+module_param_array(devices, int, NULL, 0444);
+MODULE_PARM_DESC(devices, "Device count for Serial MIDI.");
 module_param_array(id, charp, NULL, 0444);
 MODULE_PARM_DESC(id, "ID string for Serial MIDI.");
 module_param_array(enable, bool, NULL, 0444);
@@ -625,6 +627,7 @@ static int snd_card_serialmidi_probe(struct platform_device *devptr)
 	else
 		strcpy(card->shortname, card->driver);
 
+	printk(KERN_ERR "serialmidi: devices %d\n", devices[dev]);
 	if (devices[dev] > 1) {
 		int i, start_dev;
 		char devname[32];

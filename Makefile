@@ -14,7 +14,7 @@ clean:
 install:
 	cp snd-serialmidi.ko $(KERNEL_BASE)/sound/drivers
 	depmod -a
-	modprobe snd-serialmidi sdev=/dev/ttyAMA0
+	modprobe snd-serialmidi sdev=/dev/serial devices=2
 
 uninstall:
 	modprobe -r snd-serialmidi
