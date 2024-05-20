@@ -270,7 +270,7 @@ static int open_tty(serialmidi_t *serial, unsigned long mode)
 
 	serial->old_port_flags = tty->port->flags;
 	serial->old_exclusive = test_bit(TTY_EXCLUSIVE, &tty->flags);
-	tty->port->flags |= ASYNC_LOW_LATENCY;
+	//tty->port->flags |= ASYNC_LOW_LATENCY;
 	set_bit(TTY_EXCLUSIVE, &tty->flags);
 
 	set_bit(mode, &serial->mode);
@@ -304,7 +304,7 @@ static int close_tty(serialmidi_t *serial, unsigned long mode)
 
 	tty = serial->tty;
 	if (tty) {
-		tty->port->flags = serial->old_port_flags;
+		//tty->port->flags = serial->old_port_flags;
 		if (serial->old_exclusive)
 			set_bit(TTY_EXCLUSIVE, &tty->flags);
 		else
