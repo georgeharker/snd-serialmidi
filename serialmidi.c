@@ -54,7 +54,6 @@
 MODULE_AUTHOR("Jaroslav Kysela <perex@suse.cz>");
 MODULE_DESCRIPTION("Serial MIDI");
 MODULE_LICENSE("GPL");
-// MODULE_SUPPORTED_DEVICE("{{ALSA, MIDI serial tty}}");
 
 static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;		/* Index 0-MAX */
 static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;		/* ID for this card */
@@ -111,7 +110,7 @@ typedef struct _snd_serialmidi {
 	struct mutex F5lock;
 	struct task_struct *kthread_rx;
 	int old_exclusive;
-	// int old_low_latency;
+	int old_port_flags;
 	unsigned char *tx_buf;
 	unsigned char *rx_buf;
 	int open_tty_call_cnt;
@@ -269,9 +268,9 @@ static int open_tty(serialmidi_t *serial, unsigned long mode)
 	}
 #endif
 
-	// serial->old_low_latency = tty->port->low_latency;
+	serial->old_port_flags = tty->port->flags;
 	serial->old_exclusive = test_bit(TTY_EXCLUSIVE, &tty->flags);
-	// tty->port->low_latency = 1;
+	tty->port->flags |= ASYNC_LOW_LATENCY;
 	set_bit(TTY_EXCLUSIVE, &tty->flags);
 
 	set_bit(mode, &serial->mode);
@@ -305,7 +304,7 @@ static int close_tty(serialmidi_t *serial, unsigned long mode)
 
 	tty = serial->tty;
 	if (tty) {
-		// tty->port->low_latency = serial->old_low_latency;
+		tty->port->flags = serial->old_port_flags;
 		if (serial->old_exclusive)
 			set_bit(TTY_EXCLUSIVE, &tty->flags);
 		else
