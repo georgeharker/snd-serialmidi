@@ -690,6 +690,8 @@ static int snd_card_serialmidi_probe(struct platform_device *devptr)
             if ((err = snd_serialmidi_create(card, devname2, speed[dev],
                              adaptor[dev], outs[dev], ins[dev], i,
                              handshake[dev])) < 0) {
+                snd_printk(KERN_ERR
+                    "Failed to create %s (%d)\n", devname2, err);
                 snd_card_free(card);
                 return err;
             }
@@ -698,6 +700,8 @@ static int snd_card_serialmidi_probe(struct platform_device *devptr)
         if ((err = snd_serialmidi_create(card, sdev[dev], speed[dev],
                          adaptor[dev], outs[dev], ins[dev], 0,
                          handshake[dev])) < 0) {
+            snd_printk(KERN_ERR
+                "Failed to create %s (%d)\n", sdev[dev], err);
             snd_card_free(card);
             return err;
         }
@@ -706,6 +710,7 @@ static int snd_card_serialmidi_probe(struct platform_device *devptr)
     sprintf(card->longname, "%s at %s", card->shortname, sdev[dev]);
 
     if ((err = snd_card_register(card)) < 0) {
+        snd_printk(KERN_ERR "Failed to register card (%d)\n", err);
         snd_card_free(card);
         return err;
     }
